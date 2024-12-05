@@ -1,3 +1,4 @@
+import java.io.*;
 import java.util.*;
 
 public class Main {
@@ -18,7 +19,7 @@ public class Main {
                 int nx = cur[0] + dx[i];
                 int ny = cur[1] + dy[i];
 
-                if (nx >= 0 & ny >= 0 && nx < M && ny < N && grid[nx][ny] == 1 && !visited[nx][ny]) {
+                if (nx >= 0 && ny >= 0 && nx < M && ny < N && grid[nx][ny] == 1 && !visited[nx][ny]) {
                     q.add(new int[]{nx, ny});
                     visited[nx][ny] = true;
                 }
@@ -26,22 +27,23 @@ public class Main {
         }
     }
 
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-
-        int T = sc.nextInt();
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int T = Integer.parseInt(br.readLine());
 
         for (int i = 0; i < T; i++) {
-            M = sc.nextInt();
-            N = sc.nextInt();
-            int C = sc.nextInt();
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            M = Integer.parseInt(st.nextToken());
+            N = Integer.parseInt(st.nextToken());
+            int C = Integer.parseInt(st.nextToken());
 
             int[][] grid = new int[M][N];
             boolean[][] visited = new boolean[M][N];
 
             for (int j = 0; j < C; j++) {
-                int x = sc.nextInt();
-                int y = sc.nextInt();
+                st = new StringTokenizer(br.readLine());
+                int x = Integer.parseInt(st.nextToken());
+                int y = Integer.parseInt(st.nextToken());
                 grid[x][y] = 1;
             }
 
@@ -57,7 +59,6 @@ public class Main {
             }
 
             System.out.println(count);
-
         }
     }
 }
