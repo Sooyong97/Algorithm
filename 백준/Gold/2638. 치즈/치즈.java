@@ -21,94 +21,61 @@ public class Main {
             }
         }
 
-        cheese();
+        System.out.println(cheese());
     }
 
-    public static void cheese() {
+    public static int cheese() {
         int days = 0;
+
         while (true) {
-            boolean[][] visitedEmpty = new boolean[N][M];
-            boolean[][] visitedMelted = new boolean[N][M];
-            boolean allMelted = true;
+            boolean[][] visited = new boolean[N][M];
+            Queue<int[]> airQueue = new LinkedList<>();
+            airQueue.add(new int[]{0, 0});
+            visited[0][0] = true;
 
-            for (int i = 0; i < N; i++) {
-                for (int j = 0; j < M; j++) {
-                    if (map[i][j] == 0 && !visitedEmpty[i][j]) {
-                        findEmpty(i, j, visitedEmpty);
+            while (!airQueue.isEmpty()) {
+                int[] cur = airQueue.poll();
+                for (int i = 0; i < 4; i++) {
+                    int nx = cur[0] + dx[i];
+                    int ny = cur[1] + dy[i];
+                    if (nx >= 0 && nx < N && ny >= 0 && ny < M && !visited[nx][ny] && map[nx][ny] == 0) {
+                        visited[nx][ny] = true;
+                        airQueue.add(new int[]{nx, ny});
                     }
                 }
             }
 
+            boolean melted = false;
+            List<int[]> toMelt = new ArrayList<>();
+
             for (int i = 0; i < N; i++) {
                 for (int j = 0; j < M; j++) {
-                    if (map[i][j] == 1 && !visitedMelted[i][j]) {
-                        meltCheese(i, j, visitedMelted);
-                        allMelted = false;
+                    if (map[i][j] == 1) {
+                        int airCount = 0;
+                        for (int k = 0; k < 4; k++) {
+                            int nx = i + dx[k];
+                            int ny = j + dy[k];
+                            if (nx >= 0 && nx < N && ny >= 0 && ny < M && visited[nx][ny]) {
+                                airCount++;
+                            }
+                        }
+                        if (airCount >= 2) {
+                            toMelt.add(new int[]{i, j});
+                            melted = true;
+                        }
                     }
                 }
             }
 
-            if (allMelted) {
-                System.out.println(days);
-                break;
-            } else {
-                days++;
+            for (int[] cheese : toMelt) {
+                map[cheese[0]][cheese[1]] = 0;
             }
-        }
-    }
 
-
-    public static void findEmpty(int x, int y, boolean[][] visitedEmpty) {
-        Queue<int[]> q = new LinkedList<>();
-        Queue<int[]> q2 = new LinkedList<>();
-        q.add(new int[]{x, y});
-        q2.add(new int[]{x, y});
-        visitedEmpty[x][y] = true;
-        int status = 2;
-
-        while (!q.isEmpty()) {
-            int[] cur = q.poll();
-            for (int i = 0; i < 4; i++) {
-                int nx = cur[0] + dx[i];
-                int ny = cur[1] + dy[i];
-                if (nx == 0 || nx == N - 1 || ny == 0 || ny == M - 1) {
-                    status = 0;
-                }
-                if (nx >= 0 && nx < N && ny >= 0 && ny < M && map[nx][ny] != 1 && !visitedEmpty[nx][ny]) {
-                    q.add(new int[]{nx, ny});
-                    q2.add(new int[]{nx, ny});
-                    visitedEmpty[nx][ny] = true;
-                }
+            if (!melted) {
+                return days;
             }
-        }
-        while (!q2.isEmpty()) {
-            int[] cur = q2.poll();
-            map[cur[0]][cur[1]] = status;
-        }
-    }
 
-    public static void meltCheese(int x, int y, boolean[][] visitedMelted) {
-        Queue<int[]> q = new LinkedList<>();
-        Queue<int[]> q2 = new LinkedList<>();
-        q.add(new int[]{x, y});
-        visitedMelted[x][y] = true;
-        while (!q.isEmpty()) {
-            int[] cur = q.poll();
-            int count = 0;
-            for (int i = 0; i < 4; i++) {
-                int nx = cur[0] + dx[i];
-                int ny = cur[1] + dy[i];
-                if (nx >= 0 && nx < N && ny >=0 && ny < M && map[nx][ny] == 0) count++;
-                if (nx >= 0 && nx < N && ny >=0 && ny < M && map[nx][ny] == 1 && !visitedMelted[nx][ny]) {
-                    q.add(new int[]{nx, ny});
-                    visitedMelted[nx][ny] = true;
-                }
-            }
-            if (count >= 2) q2.add(cur);
-        }
-        while (!q2.isEmpty()) {
-            int[] cur = q2.poll();
-            map[cur[0]][cur[1]] = 0;
+            days++;
         }
     }
 }
