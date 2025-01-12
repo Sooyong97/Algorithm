@@ -13,7 +13,7 @@ public class Main {
         x = Integer.parseInt(st.nextToken());
 
         graph = new ArrayList[n + 1];
-        for (int i = 0; i < n + 1; i++) {
+        for (int i = 0; i <= n; i++) {
             graph[i] = new ArrayList<>();
         }
 
@@ -25,35 +25,31 @@ public class Main {
             graph[u].add(new int[]{v, w});
         }
 
-        int[][] distToX = new int[n + 1][n + 1];
-        int[][] distFromX = new int[n + 1][n + 1];
+        int[] distFromX = dijkstra(x);
 
-        for (int i = 0; i < n + 1; i++) {
-            Arrays.fill(distToX[i], Integer.MAX_VALUE);
-            Arrays.fill(distFromX[i], Integer.MAX_VALUE);
+        int maxTime = 0;
+        for (int i = 1; i <= n; i++) {
+            if (i == x) continue;
+            int[] distToX = dijkstra(i);
+            maxTime = Math.max(maxTime, distToX[x] + distFromX[i]);
         }
 
-        for (int i = 1; i < n + 1; i++) {
-            findMinTime(distToX[i], i);
-            findMinTime(distFromX[i], x);
-        }
-
-        int max = Integer.MIN_VALUE;
-        for (int i = 1; i < n + 1; i++) {
-            max = Math.max(max, distToX[i][x] + distFromX[i][i]);
-        }
-
-        System.out.println(max);
+        System.out.println(maxTime);
     }
 
-    private static void findMinTime(int[] D, int st) {
-        D[st] = 0;
+    private static int[] dijkstra(int start) {
+        int[] D = new int[n + 1];
+        Arrays.fill(D, Integer.MAX_VALUE);
+        D[start] = 0;
         PriorityQueue<int[]> pq = new PriorityQueue<>(Comparator.comparingInt(a -> a[1]));
-        pq.add(new int[]{st, 0});
+        pq.add(new int[]{start, 0});
+
         while (!pq.isEmpty()) {
             int[] cur = pq.poll();
             int node = cur[0];
             int dist = cur[1];
+            if (dist > D[node]) continue;
+
             for (int[] edge : graph[node]) {
                 int nextNode = edge[0];
                 int nextDist = edge[1];
@@ -63,5 +59,6 @@ public class Main {
                 }
             }
         }
+        return D;
     }
 }
