@@ -1,25 +1,23 @@
-import java.util.Scanner;
+import java.io.*;
+import java.util.*;
 
 public class Main {
 
-    public static int[] parent;
-    public static int[] rank;
+    static int[] parent;
+    static int[] rank;
 
-    // 루트 노드를 찾고, 경로 압축을 통해 트리의 높이를 줄임
-    public static int find(int x) {
+    static private int find(int x) {
         if (parent[x] != x) {
             parent[x] = find(parent[x]);
         }
         return parent[x];
     }
 
-    // 두 집합을 합침 (랭크 기반 유니온)
-    public static void union(int a, int b) {
+    static private void union(int a, int b) {
         int rootA = find(a);
         int rootB = find(b);
 
         if (rootA != rootB) {
-            // 랭크가 높은 쪽이 부모가 되도록 설정
             if (rank[rootA] > rank[rootB]) {
                 parent[rootB] = rootA;
             } else if (rank[rootA] < rank[rootB]) {
@@ -31,38 +29,36 @@ public class Main {
         }
     }
 
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
 
-        int n = sc.nextInt();
-        int m = sc.nextInt();
+        int n = Integer.parseInt(st.nextToken());
+        int m = Integer.parseInt(st.nextToken());
 
-        // 부모와 랭크 배열 초기화
         parent = new int[n + 1];
         rank = new int[n + 1];
 
-        for (int i = 0; i <= n; i++) {
-            parent[i] = i; // 자기 자신을 부모로 초기화
-            rank[i] = 0;   // 초기 랭크는 0
+        for (int i = 0; i < n + 1; i++) {
+            parent[i] = i;
+            rank[i] = 0;
         }
+
+        StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < m; i++) {
-            int action = sc.nextInt();
-            int a = sc.nextInt();
-            int b = sc.nextInt();
+            st = new StringTokenizer(br.readLine());
 
-            if (action == 0) {
-                union(a, b);
-            } else if (action == 1) {
-                // 같은 집합에 속하는지 확인
-                if (find(a) == find(b)) {
-                    System.out.println("YES");
-                } else {
-                    System.out.println("NO");
-                }
+            int command = Integer.parseInt(st.nextToken());
+            int a = Integer.parseInt(st.nextToken());
+            int b = Integer.parseInt(st.nextToken());
+
+            if (command == 0) union(a, b);
+            if (command == 1) {
+                if (find(a) == find(b)) sb.append("YES\n");
+                else sb.append("NO\n");
             }
         }
-
-        sc.close();
+        System.out.print(sb);
     }
 }
