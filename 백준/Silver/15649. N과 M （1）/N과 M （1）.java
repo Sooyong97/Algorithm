@@ -4,6 +4,7 @@ import java.io.*;
 public class Main {
 
     static int N, M;
+    static StringBuilder sb = new StringBuilder();
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -14,14 +15,15 @@ public class Main {
         int[] arr = new int[M];
         boolean[] visited = new boolean[N + 1];
         dfs(arr, visited, 0);
+        System.out.println(sb);
     }
 
     static void dfs(int[] arr, boolean[] visited, int depth) {
         if (depth == M) {
             for (int i = 0; i < M; i++) {
-                System.out.print(arr[i] + " ");
+                sb.append(arr[i]).append(" ");
             }
-            System.out.println();
+            sb.append("\n");
             return;
         }
 
